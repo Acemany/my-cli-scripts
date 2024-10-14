@@ -7,14 +7,16 @@ cd $sd
 git fetch
 git pull
 
+
 rm -rf ./steam 
 mkdir steam
 
-cp -r '/home/acemany/.steam/debian-installation/steamapps/common/Mindustry/saves/maps' './steam/maps'
-cp -r '/home/acemany/.steam/debian-installation/steamapps/common/Mindustry/saves/mods' './steam/mods'
-cp -r '/home/acemany/.steam/debian-installation/steamapps/common/Mindustry/saves/saves' './steam/saves'
-cp -r '/home/acemany/.steam/debian-installation/steamapps/common/Mindustry/saves/schematics' './steam/schematics'
-cp '/home/acemany/.steam/debian-installation/steamapps/common/Mindustry/saves/settings.bin' './steam/settings.bin'
+cp -r '/home/acemany/.steam/debian-installation/steamapps/common/Mindustry/saves/maps'         './steam/maps'
+cp -r '/home/acemany/.steam/debian-installation/steamapps/common/Mindustry/saves/mods'         './steam/mods'
+cp -r '/home/acemany/.steam/debian-installation/steamapps/common/Mindustry/saves/saves'        './steam/saves'
+cp -r '/home/acemany/.steam/debian-installation/steamapps/common/Mindustry/saves/schematics'   './steam/schematics'
+cp    '/home/acemany/.steam/debian-installation/steamapps/common/Mindustry/saves/settings.bin' './steam/settings.bin'
+
 
 git add *
 
