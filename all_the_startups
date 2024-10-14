@@ -18,7 +18,20 @@ cp -r '/home/acemany/.steam/debian-installation/steamapps/common/Mindustry/saves
 cp    '/home/acemany/.steam/debian-installation/steamapps/common/Mindustry/saves/settings.bin' './steam/settings.bin'
 
 
+be_version=$(echo echo $(\ls /home/acemany/.local/share/Mindustry/be_builds) | cut -d. -f 1 | cut -d- -f 3)
+echo "Current BE version is $be_version"
+
+rm -rf "./be$be_version"
+mkdir "be$be_version"
+
+cp -r '/home/acemany/.local/share/Mindustry/maps'         "./be$be_version/maps"
+cp -r '/home/acemany/.local/share/Mindustry/mods'         "./be$be_version/mods"
+cp -r '/home/acemany/.local/share/Mindustry/saves'        "./be$be_version/saves"
+cp -r '/home/acemany/.local/share/Mindustry/schematics'   "./be$be_version/schematics"
+cp    '/home/acemany/.local/share/Mindustry/settings.bin' "./be$be_version/settings.bin"
+
+
 git add *
 
-git commit -m 'Auto upload from steam and be version saves path'
+git commit -m "Auto upload from steam and BE-$be_version versions saves path"
 # git push
