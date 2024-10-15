@@ -1,0 +1,22 @@
+#! /bin/python3
+
+from requests import get as r_get
+import click
+
+
+@click.command()
+@click.argument('prompt')
+def main(prompt: str):
+    """Shows you most populaar r34 for PROMPT"""
+    link = f"https://api.rule34.xxx/autocomplete.php?q={prompt}"
+
+    print()
+
+    tag_counts = r_get(link).json()
+    for tag in tag_counts:
+        tag_num = tag["label"].split(' ', maxsplit=1)
+        click.echo(f'{click.style(tag_num[0], fg="green")}: {int(tag_num[1][1:-1]):,}')
+
+
+if __name__ == "__main__":
+    main()
