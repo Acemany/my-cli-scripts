@@ -1,0 +1,38 @@
+#!/usr/bin/bash
+
+
+link_to_latest_files() {
+    wget https://api.github.com/repos/Anuken/MindustryBuilds/releases/latest -qO - | awk -F \" -v RS="," '/browser_download_url/ {print $(NF-1)}'
+}
+
+
+arg1=${1:-all}
+
+case $arg1 in
+    a | android)
+        link_to_latest_files | grep Android
+        link_to_latest_files | grep Android | xclip -selection c
+        echo
+        echo Links to last BE mindustry Android build was copied to clipboard!
+        ;;
+    pc | w | l | desktop | windows | linux)
+        link_to_latest_files | grep Desktop
+        link_to_latest_files | grep Desktop | xclip -selection c
+        echo
+        echo Links to last BE mindustry Desktop build was copied to clipboard!
+        ;;
+    s | server)
+        link_to_latest_files | grep Server
+        link_to_latest_files | grep Server | xclip -selection c
+        echo
+        echo Links to last BE mindustry Server build was copied to clipboard!
+        ;;
+    c | all)
+        link_to_latest_files
+        link_to_latest_files | xclip -selection c
+        echo
+        echo Links to last BE mindustry build was copied to clipboard!
+        ;;
+esac
+
+unset link_to_latest_files
