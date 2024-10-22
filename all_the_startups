@@ -25,11 +25,11 @@ rm -rf "./bleeding-edge"
 mkdir "bleeding-edge"
 
 echo $be_version > ./bleeding-edge/version.txt
-cp -r '/home/acemany/.local/share/Mindustry/maps'         "./bleeding-edge/maps"
-cp -r '/home/acemany/.local/share/Mindustry/mods'         "./bleeding-edge/mods"
-cp -r '/home/acemany/.local/share/Mindustry/saves'        "./bleeding-edge/saves"
-cp -r '/home/acemany/.local/share/Mindustry/schematics'   "./bleeding-edge/schematics"
-cp    '/home/acemany/.local/share/Mindustry/settings.bin' "./bleeding-edge/settings.bin"
+cp -r '/home/acemany/.local/share/Mindustry/maps'         './bleeding-edge/maps'
+cp -r '/home/acemany/.local/share/Mindustry/mods'         './bleeding-edge/mods'
+cp -r '/home/acemany/.local/share/Mindustry/saves'        './bleeding-edge/saves'
+cp -r '/home/acemany/.local/share/Mindustry/schematics'   './bleeding-edge/schematics'
+cp    '/home/acemany/.local/share/Mindustry/settings.bin' './bleeding-edge/settings.bin'
 
 
 git add *
