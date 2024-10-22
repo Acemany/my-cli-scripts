@@ -8,7 +8,6 @@ git fetch
 git pull
 
 
-rm -rf ./steam 
 mkdir steam
 
 cp -r '/home/acemany/.steam/debian-installation/steamapps/common/Mindustry/saves/maps'         './steam/maps'
@@ -30,6 +29,22 @@ cp -r '/home/acemany/.local/share/Mindustry/mods'         './bleeding-edge/mods'
 cp -r '/home/acemany/.local/share/Mindustry/saves'        './bleeding-edge/saves'
 cp -r '/home/acemany/.local/share/Mindustry/schematics'   './bleeding-edge/schematics'
 cp    '/home/acemany/.local/share/Mindustry/settings.bin' './bleeding-edge/settings.bin'
+
+
+rm -rf ./v4
+mkdir v4
+
+cp -r '/home/acemany/.mindustry v4/maps'         './v4/maps'
+cp -r '/home/acemany/.mindustry v4/saves'        './v4/saves'
+cp    '/home/acemany/.mindustry v4/io.acemany.mindustryV4' './v4/io.acemany.mindustryV4'
+
+
+rm -rf ./server-v4
+mkdir server-v4
+
+cp -r '/home/acemany/.mindustry v4/maps'         './server-v4/maps'
+cp -r '/home/acemany/.mindustry v4/saves'        './server-v4/saves'
+cp    '/home/acemany/.mindustry v4/io.acemany.mindustryV4' './server-v4/io.acemany.mindustryV4.server'
 
 
 git add *
