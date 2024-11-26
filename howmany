@@ -8,12 +8,17 @@ import click
 @click.argument('prompt')
 def main(prompt: str):
     """Shows you most populaar r34 for PROMPT"""
-    link = f"https://api.rule34.xxx/autocomplete.php?q={prompt}"
+    lnk: str = f"https://api.rule34.xxx/autocomplete.php?q={prompt}"
 
-    print()
+    resp = r_get(lnk)
 
-    tag_counts = r_get(link).json()
-    for tag in tag_counts:
+    code: int = resp.status_code
+    click.echo(resp.text if code > 399 else '' + click.style(code, fg=("grey", "green", "yellow", "red", "bright_red")[code//100-1]))
+
+    if not code < 400:
+        return
+
+    for tag in resp.json():
         tag_num = tag["label"].split(' ', maxsplit=1)
         click.echo(f'{click.style(tag_num[0], fg="green")}: {int(tag_num[1][1:-1]):,}')
 
