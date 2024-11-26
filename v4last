@@ -1,0 +1,55 @@
+#!/usr/bin/bash
+#
+# v4last [pdwlsac]/desktop/windows/linux/server/android/*all* *true*/false
+#
+
+
+link_to_latest_files() {
+    wget https://api.github.com/repos/Acemany/MindustryV4Builds/releases/latest -qO - | awk -F \" -v RS="," '/browser_download_url/ {print $(NF-1)}'
+}
+
+
+arg1="${1:-all}"
+download="${2:-false}"
+
+case "$arg1" in
+  p | d | w | l | pc | desktop | windows | linux)
+    echo $(link_to_latest_files | grep Desktop)
+    if [ "$2" ]; then
+      wget -O mindustry.jar $(link_to_latest_files | grep Desktop) -q
+      echo Last v4 mindustry Desktop build was downloaded!
+    fi
+    echo
+    ;;
+  s | server)
+    echo $(link_to_latest_files | grep Server)
+    if [ "$2" ]; then
+      wget -O server.jar $(link_to_latest_files | grep Server) -q
+      echo Last v4 mindustry Server build was downloaded!
+    fi
+    echo
+    ;;
+  a | android)
+    echo $(link_to_latest_files | grep Android)
+    if [ "$2" ]; then
+      wget -O android.apk $(link_to_latest_files | grep Android) -q
+      echo Last v4 mindustry Android build was downloaded!
+    fi
+    echo
+    ;;
+  c | all)
+    for i in $(link_to_latest_files); do
+      echo "$i"
+    done
+
+    if [ "$2" ]; then
+      wget -O mindustry.jar $(link_to_latest_files | grep Desktop) -q
+      wget -O server.jar $(link_to_latest_files | grep Server) -q
+      wget -O android.apk $(link_to_latest_files | grep Android) -q
+      echo Last v4 mindustry build was downloaded!
+    fi
+    echo
+    ;;
+esac
+
+unset link_to_latest_files
