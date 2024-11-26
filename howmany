@@ -1,4 +1,4 @@
-#! /bin/python3
+#!/bin/python3
 
 from requests import get as r_get
 import click
