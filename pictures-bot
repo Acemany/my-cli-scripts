@@ -7,6 +7,7 @@ from aiogram.filters import Command
 from aiogram import Bot, Dispatcher
 from aiogram.types import Message
 from dotenv import dotenv_values
+from json import dump, load
 from pathlib import Path
 from typing import Any
 
@@ -42,28 +43,53 @@ secrets: dict[str, str] = dotenv_values(bot_root/".env")  # type: ignore
 TOKEN: str = secrets["BOT_TOKEN"]
 bot: Bot = Bot(token=TOKEN)
 dp: Dispatcher = Dispatcher()
+miha: int = 1987557308
+
+with open(bot_root/'count.json', 'r') as f:
+    count: dict[str, dict[str, int]] = load(f)
+
+
+def reg(m: Message):
+    chat = str(m.from_user.id) if m.from_user.id == m.chat.id else f"{m.chat.id}/{m.from_user.id}"
+
+    if chat not in count:
+        count[chat] = dict()
+    count[chat][m.text] = count[chat].get(m.text, 0) + 1
 
 
 @dp.message(Command('start'))
 async def start(message: Message):
-    await message.reply('Привет! я жалкая копия бота червяка',
-                        parse_mode='markdown')
+    await message.reply('Привет! Я жалкая копия бота червяка')
 
 
 @dp.message(Command('help'))
 async def help(message: Message):
     await message.reply("/cat - Случайное фото котэм\n"
-                  "/catgif - Случайная гифка с котэм\n"
-                  "/dog - Случайное фото пёсика\n"
-                  "/fox - Случайное фото лисы\n"
-                  "/neko - Случайное фото кошкодевочки\n"
-                  "/girl - Случайное фото оняме девочки\n"
-                  "/help - Этот список")
+                        "/catgif - Случайная гифка с котэм\n"
+                        "/dog - Случайное фото пёсика\n"
+                        "/fox - Случайное фото лисы\n"
+                        "/neko - Случайное фото кошкодевочки\n"
+                        "/girl - Случайное фото оняме девочки\n"
+                        "/help - Этот список")
 
 
-@dp.message(Command("cat"))
+@dp.message(Command('stats'))
+@видвал_сраки
+async def stats(m: Message):
+    if m.from_user.id != miha:
+        print("Nonadmin tried to get stats:", m.from_user.id)
+        return
+    tmp = ""
+    for k, v in count.items():
+        tmp += f"`{k}`:\n{''.join(f'`    ``{vk}`: {vv}\n' for vk, vv in v.items())}"
+
+    await m.reply(tmp, parse_mode='markdown')
+
+
+@dp.message(Command('cat'))
 @видвал_сраки
 async def cat(m: Message):
+    reg(m)
     url = (await get("https://api.thecatapi.com/v1/images/search"))[0]["url"]
     try:
         await m.reply_photo(url)
@@ -75,6 +101,7 @@ async def cat(m: Message):
 @dp.message(Command("catgif"))
 @видвал_сраки
 async def catgif(m: Message):
+    reg(m)
     url: str = f"https://cataas.com/cat/{(await get("http://cataas.com/cat/gif?json=true"))['_id']}.gif"
     try:
         await m.reply_animation(url)
@@ -86,6 +113,7 @@ async def catgif(m: Message):
 @dp.message(Command("dog"))
 @видвал_сраки
 async def dog(m: Message):
+    reg(m)
     url = (await get("https://api.thedogapi.com/v1/images/search"))[0]["url"]
     try:
         await m.reply_photo(url)
@@ -97,6 +125,7 @@ async def dog(m: Message):
 @dp.message(Command("fox"))
 @видвал_сраки
 async def fox(m: Message):
+    reg(m)
     url = (await get("https://randomfox.ca/floof"))["image"]
     try:
         await m.reply_photo(url)
@@ -108,6 +137,7 @@ async def fox(m: Message):
 @dp.message(Command("neko"))
 @видвал_сраки
 async def neko(m: Message):
+    reg(m)
     url = (await get("https://nekos.best/api/v2/neko/"))["results"][0]["url"]
     try:
         await m.reply_photo(url)
@@ -119,6 +149,7 @@ async def neko(m: Message):
 @dp.message(Command("girl"))
 @видвал_сраки
 async def girl(m: Message):
+    reg(m)
     url = (await get("https://api.nekosapi.com/v3/images/random?rating=safe"))["items"][0]["image_url"]
     try:
         await m.reply_photo(url)
@@ -133,3 +164,6 @@ async def girl(m: Message):
 
 
 aiorun(dp.start_polling(bot))  # type: ignore
+
+with open(bot_root/'count.json', 'w') as f:
+    dump(count, f)
