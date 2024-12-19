@@ -4,6 +4,8 @@ from collections.abc import Callable, Generator, Iterable
 from asyncio import run as aiorun, sleep
 from aiohttp import ClientSession
 from aiogram.filters import Command
+from aiogram.exceptions import TelegramBadRequest
+from aiogram.utils.media_group import MediaGroupBuilder
 from aiogram import Bot, Dispatcher
 from aiogram.types import Message
 from dotenv import dotenv_values
@@ -12,15 +14,15 @@ from pathlib import Path
 from typing import Any
 
 
-bot_root: Path = Path(__file__).parent
-
-
 def видвал_сраки(handler: Callable[..., Any]) -> Callable[..., Any]:
     async def wrapped(message: Message) -> Any:
         try:
             return await handler(message)
         except Exception as e:
-            await message.reply("Сталася критична помилка:\nВидвал сраки")
+            if message.text not in ("/catgif", "/catgif@acemanybot"):
+                await message.reply("Сталася критична помилка:\nВидвал сраки")
+            elif e is TelegramBadRequest:
+                await message.reply("Похоже котик затерялся.. там. Попробуй ещё разок!")
             raise e
 
     return wrapped
@@ -29,6 +31,11 @@ def видвал_сраки(handler: Callable[..., Any]) -> Callable[..., Any]:
 async def get(url: str) -> dict[str, object]:
     async with ClientSession() as s:
         return await (await s.get(url)).json()
+    raise Exception("Such a specific exception\n\n\nthai isn't supposed to exist")
+
+
+def parse_message_args(s: str) -> list[str]:
+    return s.split(' ')[1:] if ' ' in s else []
 
 
 def separate_every(a: str, b: float) -> Generator[str, None, None]:
@@ -38,14 +45,15 @@ def separate_every(a: str, b: float) -> Generator[str, None, None]:
             for i in range(int(1+(len(a)-1)/b)))
 
 
-secrets: dict[str, str] = dotenv_values(bot_root/".env")  # type: ignore
+secrets: dict[str, str] = dotenv_values(".env")  # type: ignore
 
 TOKEN: str = secrets["BOT_TOKEN"]
 bot: Bot = Bot(token=TOKEN)
 dp: Dispatcher = Dispatcher()
-miha: int = 1987557308
+miha: set[int] = {1987557308, 6076298659}
+tagsdict = {'illustration': 1, 'original_style': 25, 'boy': 52, 'horsegirl': 51, 'blonde_hair': 50, 'skirt': 49, 'kissing': 48, 'threesome': 47, 'masturbating': 46, 'futanari': 45, 'anal': 44, 'glasses': 43, 'red_hair': 42, 'yuri': 41, 'wet': 40, 'baggy_clothes': 39, 'guitar': 38, 'school_uniform': 37, 'usagimimi': 36, 'dress': 35, 'bunny_girl': 34, 'tree': 33, 'ice_cream': 32, 'bikini': 31, 'weapon': 30, 'shorts': 29, 'rain': 28, 'sunny': 27, 'brown_hair': 26, 'gloves': 24, 'night': 23, 'mountain': 22, 'reading': 21, 'beach': 20, 'maid': 19, 'dick': 18, 'exposed_anus': 16, 'exposed_girl_breasts': 15, 'pink_hair': 13, 'blue_hair': 12, 'loli': 10, 'white_hair': 9, 'catgirl': 8, 'flowers': 7, 'sword': 5, 'sportswear': 4, 'girl': 2, 'pussy': 17, 'large_breasts': 53, 'medium_breasts': 54, 'small_breasts': 55, 'flat_chest': 56, 'purple_hair': 14, 'plants': 11, 'kemonomimi': 6, 'black_hair': 3, 'furry': 57}
 
-with open(bot_root/'count.json', 'r') as f:
+with open('./count.json', 'r') as f:
     count: dict[str, dict[str, int]] = load(f)
 
 
@@ -64,19 +72,20 @@ async def start(message: Message):
 
 @dp.message(Command('help'))
 async def help(message: Message):
-    await message.reply("/cat - Случайное фото котэм\n"
-                        "/catgif - Случайная гифка с котэм\n"
-                        "/dog - Случайное фото пёсика\n"
-                        "/fox - Случайное фото лисы\n"
-                        "/neko - Случайное фото кошкодевочки\n"
-                        "/girl - Случайное фото оняме девочки\n"
+    await message.reply("/cat - фото котэта\n"
+                        "/catgif - гифка с котэм\n"
+                        "/dog - пёсель\n"
+                        "/fox - лись\n"
+                        "/neko - кошкодевочка\n"
+                        "/girl - оняме девочка\n"
+                        "/safe - SFW картиночки, с промптом\n"
                         "/help - Этот список")
 
 
 @dp.message(Command('stats'))
 @видвал_сраки
 async def stats(m: Message):
-    if m.from_user.id != miha:
+    if m.chat.id not in miha:
         print("Nonadmin tried to get stats:", m.from_user.id)
         return
     tmp = ""
@@ -90,7 +99,9 @@ async def stats(m: Message):
 @видвал_сраки
 async def cat(m: Message):
     reg(m)
+
     url = (await get("https://api.thecatapi.com/v1/images/search"))[0]["url"]
+
     try:
         await m.reply_photo(url)
     except Exception as e:
@@ -102,7 +113,9 @@ async def cat(m: Message):
 @видвал_сраки
 async def catgif(m: Message):
     reg(m)
+
     url: str = f"https://cataas.com/cat/{(await get("http://cataas.com/cat/gif?json=true"))['_id']}.gif"
+
     try:
         await m.reply_animation(url)
     except Exception as e:
@@ -114,7 +127,9 @@ async def catgif(m: Message):
 @видвал_сраки
 async def dog(m: Message):
     reg(m)
+
     url = (await get("https://api.thedogapi.com/v1/images/search"))[0]["url"]
+
     try:
         await m.reply_photo(url)
     except Exception as e:
@@ -126,7 +141,9 @@ async def dog(m: Message):
 @видвал_сраки
 async def fox(m: Message):
     reg(m)
+
     url = (await get("https://randomfox.ca/floof"))["image"]
+
     try:
         await m.reply_photo(url)
     except Exception as e:
@@ -138,11 +155,45 @@ async def fox(m: Message):
 @видвал_сраки
 async def neko(m: Message):
     reg(m)
+
     url = (await get("https://nekos.best/api/v2/neko/"))["results"][0]["url"]
+
     try:
         await m.reply_photo(url)
     except Exception as e:
         print(url)
+        raise e
+
+
+@dp.message(Command("safe"))
+@видвал_сраки
+async def safe(m: Message):
+    reg(m)
+
+    args = parse_message_args(m.text)
+    limit: int = args[0] if len(args) > 0 and args[0].isdigit() else 1
+    tags: str = ("&tags="+"%20".join(parse_message_args(m.text)[int(args[0].isdigit()):])) if " " in m.text else ""
+    prev = f"https://safebooru.org/index.php?page=dapi&s=post&q=index&limit={limit}&json=1{tags}"
+    #print(prev)
+    temp = await get(prev)
+    if temp is None:
+        await m.reply("Не нашла ничего подходящего(")
+        return
+    urls = (i["file_url"] for i in temp)
+
+
+    try:
+        try:
+            media_group = MediaGroupBuilder()
+            [media_group.add_photo(i) for i in urls]
+            await m.answer_media_group(media_group.build())
+        except TelegramBadRequest:
+            urls = (i["sample_url"] for i in temp)
+            media_group = MediaGroupBuilder()
+            [media_group.add_photo(i) for i in urls]
+            await m.answer_media_group(media_group.build())
+    except Exception as e:
+        print(urls)
         raise e
 
 
@@ -150,20 +201,45 @@ async def neko(m: Message):
 @видвал_сраки
 async def girl(m: Message):
     reg(m)
-    url = (await get("https://api.nekosapi.com/v3/images/random?rating=safe"))["items"][0]["image_url"]
+
+    tags: str = "".join(f"&tag={tagsdict[tag]}" for tag in parse_message_args(m.text))
+    lim: int = 5
+    urls = (i["image_url"] for i in (await get(f"https://api.nekosapi.com/v3/images/random?rating=safe{tags}&limit={lim}"))["items"])
+
+    media_group = MediaGroupBuilder()
+    [media_group.add_photo(i) for i in urls]
+
     try:
-        await m.reply_photo(url)
+        await m.answer_media_group(media_group.build())
     except Exception as e:
-        print(url)
+        print(*urls)
         raise e
 
 
-# @dp.message(Command("girlX"))
-# @видвал_сраки
-"https://api.nekosapi.com/v3/images/random?rating=explicit"
+@dp.message(Command("girlx"))
+@видвал_сраки
+async def explicit(m: Message):
+    reg(m)
+    if m.chat.id not in miha:
+        print("Nonadmin tried to what:", m.from_user.id)
+        return
 
+    tags: str = "".join(f"&tag={tagsdict[tag]}" for tag in parse_message_args(m.text))
+    lim: int = 5
+    pics = (await get(f"https://api.nekosapi.com/v3/images/random?rating=explicit{tags}&limit={lim}"))["items"]
+    urls = (i["image_url"] for i in pics)
+    caption: str = "\n".join(", ".join(j['name'] for j in i["tags"]) for i in pics)
+
+    media_group = MediaGroupBuilder(caption=caption)
+    [media_group.add_photo(i) for i in urls]
+
+    try:
+        await m.answer_media_group(media_group.build())
+    except Exception as e:
+        print(*urls)
+        raise e
 
 aiorun(dp.start_polling(bot))  # type: ignore
 
-with open(bot_root/'count.json', 'w') as f:
+with open('./count.json', 'w') as f:
     dump(count, f)
