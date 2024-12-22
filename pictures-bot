@@ -351,6 +351,7 @@ async def explicit(m: Message):
 
     media_group = MediaGroupBuilder(caption=caption)
     for i in pics:
+        media_group.add_photo(i["image_url"])
 
     try:
         await m.answer_media_group(media_group.build())
