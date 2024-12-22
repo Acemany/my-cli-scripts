@@ -257,10 +257,15 @@ async def neko(m: Message):
 
     await reg(m)
 
-    url = (await get('https://nekos.best/api/v2/neko/'))["results"][0]["url"]
+    args = parse_message_args(m.text)
+    lim: int = args[0] if len(args) > 0 and args[0].isdigit() else 1
+    urls = (await get(f'https://nekos.best/api/v2/neko?amount={lim}'))["results"]
 
     try:
-        await m.reply_photo(url)
+        media_group = MediaGroupBuilder()
+        for i in urls:
+            media_group.add_photo(i['url'])
+        await m.answer_media_group(media_group.build())
     except Exception as e:
         print(url)
         raise e
@@ -281,23 +286,22 @@ async def safe(m: Message):
     pid: int = args[-1] if len(args) > 1 and args[0].isdigit() and args[-1].isdigit() else 0
     tags: str = ('&tags='+'%20'.join(parse_message_args(m.text)[int(args[0].isdigit()):len(parse_message_args(m.text))-int(len(args) > 1 and args[-1].isdigit())])) if " " in m.text else ""
     prev = f"https://safebooru.org/index.php?page=dapi&s=post&q=index&limit={limit}&json=1{tags}&pid={pid}"
-    temp = await get(prev)
-    if temp is None:
+
+    urls = await get(prev)
+    if urls is None:
         await m.reply('Не нашла ничего подходящего(')
         return
-    urls = (i["file_url"] for i in temp)
 
     try:
         try:
             media_group = MediaGroupBuilder()
             for i in urls:
-                media_group.add_photo(i)
+                media_group.add_photo(i["file_url"])
             await m.answer_media_group(media_group.build())
         except TelegramBadRequest:
-            urls = (i["sample_url"] for i in temp)
             media_group = MediaGroupBuilder()
             for i in urls:
-                media_group.add_photo(i)
+                media_group.add_photo(i["sample_url"])
             await m.answer_media_group(media_group.build())
     except Exception as e:
         print(urls)
@@ -343,12 +347,10 @@ async def explicit(m: Message):
     tags: str = "".join(f'&tag={tagsdict[tag]}' for tag in parse_message_args(m.text))
     lim: int = 5
     pics = (await get(f'https://api.nekosapi.com/v3/images/random?rating=explicit{tags}&limit={lim}'))["items"]
-    urls = (i["image_url"] for i in pics)
     caption: str = "\n".join(", ".join(j["name"] for j in i["tags"]) for i in pics)
 
     media_group = MediaGroupBuilder(caption=caption)
-    for i in urls:
-        media_group.add_photo(i)
+    for i in pics:
 
     try:
         await m.answer_media_group(media_group.build())
