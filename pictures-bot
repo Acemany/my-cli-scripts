@@ -48,9 +48,9 @@ async def reg(m: Message):
     if m.chat.id not in count:
         count[m.chat.id] = dict()
     if m.from_user.id not in count[m.chat.id]:
-        count[m.chat.id][m.from_user.id] = {command: 0}
+        count[m.chat.id][m.from_user.id] = dict()
 
-    count[m.chat.id][m.from_user.id][command] += count[m.chat.id][m.from_user.id].get(
+    count[m.chat.id][m.from_user.id][command] = count[m.chat.id][m.from_user.id].get(
         command,
         0
     ) + 1
@@ -281,7 +281,6 @@ async def safe(m: Message):
     pid: int = args[-1] if len(args) > 1 and args[0].isdigit() and args[-1].isdigit() else 0
     tags: str = ('&tags='+'%20'.join(parse_message_args(m.text)[int(args[0].isdigit()):len(parse_message_args(m.text))-int(len(args) > 1 and args[-1].isdigit())])) if " " in m.text else ""
     prev = f"https://safebooru.org/index.php?page=dapi&s=post&q=index&limit={limit}&json=1{tags}&pid={pid}"
-    # print(prev)
     temp = await get(prev)
     if temp is None:
         await m.reply('Не нашла ничего подходящего(')
