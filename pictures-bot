@@ -65,7 +65,7 @@ def видвал_сраки(handler: Callable[..., Any]) -> Callable[..., Any]:
         except Exception as e:
             await log(f'[E] {unorid(message)}: "{message.text.replace('\n', '\\n')}"\n{e}\n')
             if message.text not in ("/catgif", "/catgif@acemanybot"):
-                await message.reply("Сталася критична помилка:\nВидвал сраки")
+                await message.reply("Сталася критична помилка: \nВiдвал сраки")
             elif e is TelegramBadRequest:
                 await message.reply("Похоже котик затерялся.. Попробуй ещё разок!")
             raise e
