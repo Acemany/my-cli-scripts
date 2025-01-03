@@ -12,6 +12,7 @@ mkdir steam
 cp -r "$HOME/.local/share/Steam/steamapps/common/Mindustry/saves/maps"         './steam/maps'
 cp -r "$HOME/.local/share/Steam/steamapps/common/Mindustry/saves/mods"         './steam/mods'
 cp -r "$HOME/.local/share/Steam/steamapps/common/Mindustry/saves/saves"        './steam/saves'
+find ./steam/saves -regex '^.*\.msav-backup\.msav$' -delete
 cp -r "$HOME/.local/share/Steam/steamapps/common/Mindustry/saves/schematics"   './steam/schematics'
 cp    "$HOME/.local/share/Steam/steamapps/common/Mindustry/saves/settings.bin" './steam/settings.bin'
 
