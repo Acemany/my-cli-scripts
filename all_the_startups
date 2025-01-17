@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-cd "$HOME/github/My-msav"
+homevar="/home/xarnz"
+
+cd "$homevar/github/My-msav"
 
 git fetch
 git pull
@@ -9,42 +11,42 @@ git pull
 rm -rf ./steam
 mkdir steam
 
-cp -r "$HOME/.local/share/Steam/steamapps/common/Mindustry/saves/maps"         './steam/maps'
-cp -r "$HOME/.local/share/Steam/steamapps/common/Mindustry/saves/mods"         './steam/mods'
-cp -r "$HOME/.local/share/Steam/steamapps/common/Mindustry/saves/saves"        './steam/saves'
+cp -r "$homevar/.local/share/Steam/steamapps/common/Mindustry/saves/maps"         './steam/maps'
+cp -r "$homevar/.local/share/Steam/steamapps/common/Mindustry/saves/mods"         './steam/mods'
+cp -r "$homevar/.local/share/Steam/steamapps/common/Mindustry/saves/saves"        './steam/saves'
 find ./steam/saves -regex '^.*\.msav-backup\.msav$' -delete
-cp -r "$HOME/.local/share/Steam/steamapps/common/Mindustry/saves/schematics"   './steam/schematics'
-cp    "$HOME/.local/share/Steam/steamapps/common/Mindustry/saves/settings.bin" './steam/settings.bin'
+cp -r "$homevar/.local/share/Steam/steamapps/common/Mindustry/saves/schematics"   './steam/schematics'
+cp    "$homevar/.local/share/Steam/steamapps/common/Mindustry/saves/settings.bin" './steam/settings.bin'
 
 
-be_version=$(echo $(\ls $HOME/.local/share/Mindustry/be_builds) | cut -d. -f 1 | cut -d- -f 3)
+be_version=$(echo $(\ls $homevar/.local/share/Mindustry/be_builds) | cut -d. -f 1 | cut -d- -f 3)
 echo "Current BE version is $be_version"
 
 rm -rf "./bleeding-edge"
 mkdir "bleeding-edge"
 
 echo $be_version > ./bleeding-edge/version.txt
-cp -r "$HOME/.local/share/Mindustry/maps"         './bleeding-edge/maps'
-cp -r "$HOME/.local/share/Mindustry/mods"         './bleeding-edge/mods'
-cp -r "$HOME/.local/share/Mindustry/saves"        './bleeding-edge/saves'
-cp -r "$HOME/.local/share/Mindustry/schematics"   './bleeding-edge/schematics'
-cp    "$HOME/.local/share/Mindustry/settings.bin" './bleeding-edge/settings.bin'
+cp -r "$homevar/.local/share/Mindustry/maps"         './bleeding-edge/maps'
+cp -r "$homevar/.local/share/Mindustry/mods"         './bleeding-edge/mods'
+cp -r "$homevar/.local/share/Mindustry/saves"        './bleeding-edge/saves'
+cp -r "$homevar/.local/share/Mindustry/schematics"   './bleeding-edge/schematics'
+cp    "$homevar/.local/share/Mindustry/settings.bin" './bleeding-edge/settings.bin'
 
 
 rm -rf ./v4
 mkdir v4
 
-cp -r "$HOME/.mindustry v4/maps"                   './v4/maps'
-cp -r "$HOME/.mindustry v4/saves"                  './v4/saves'
-cp    "$HOME/.mindustry v4/io.acemany.mindustryV4" './v4/io.acemany.mindustryV4'
+cp -r "$homevar/.mindustry v4/maps"                   './v4/maps'
+cp -r "$homevar/.mindustry v4/saves"                  './v4/saves'
+cp    "$homevar/.mindustry v4/io.acemany.mindustryV4" './v4/io.acemany.mindustryV4'
 
 
 #rm -rf ./server-v4
 #mkdir server-v4
 #
-#cp -r "$HOME/.mindustry v4/maps"                   './server-v4/maps'
-#cp -r "$HOME/.mindustry v4/saves"                  './server-v4/saves'
-#cp    "$HOME/.mindustry v4/io.acemany.mindustryV4" './server-v4/io.acemany.mindustryV4.server'
+#cp -r "$homevar/.mindustry v4/maps"                   './server-v4/maps'
+#cp -r "$homevar/.mindustry v4/saves"                  './server-v4/saves'
+#cp    "$homevar/.mindustry v4/io.acemany.mindustryV4" './server-v4/io.acemany.mindustryV4.server'
 
 
 git add *
